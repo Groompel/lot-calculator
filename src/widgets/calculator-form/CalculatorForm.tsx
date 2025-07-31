@@ -1,40 +1,40 @@
-import { useState, useEffect, useRef } from 'react';
 import {
-  Card,
-  Title,
-  Grid,
-  NumberInput,
-  Select,
-  Button,
-  Text,
   Alert,
-  Group,
-  Stack,
-  Divider,
   Badge,
+  Button,
+  Card,
+  Divider,
+  Grid,
+  Group,
+  NumberInput,
   SegmentedControl,
+  Select,
+  Stack,
+  Text,
+  Title,
   useMantineTheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDebouncedValue, useMediaQuery } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconCalculator, IconInfoCircle, IconX } from '@tabler/icons-react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import {
+  DEFAULT_SYMBOL,
+  getAvailableSymbols,
+  getSymbolById,
+} from '../../shared/config/trading-symbols';
 import {
   calculateLotSize,
   formatCurrency,
   formatNumber,
 } from '../../shared/lib/lot-calculator';
-import {
-  getAvailableSymbols,
-  DEFAULT_SYMBOL,
-  getSymbolById,
-} from '../../shared/config/trading-symbols';
 import type {
   CalculationResult,
-  TradingSymbol,
   InputMode,
+  TradingSymbol,
 } from '../../shared/types/trading';
 
 interface FormValues {
@@ -243,6 +243,7 @@ export function CalculatorForm() {
                 decimalScale={2}
                 prefix="$"
                 thousandSeparator=","
+                inputMode="decimal"
                 key={form.key('accountBalance')}
                 {...form.getInputProps('accountBalance')}
               />
@@ -254,6 +255,7 @@ export function CalculatorForm() {
                 max={100}
                 decimalScale={1}
                 suffix="%"
+                inputMode="decimal"
                 key={form.key('riskPercentage')}
                 {...form.getInputProps('riskPercentage')}
               />
@@ -286,6 +288,7 @@ export function CalculatorForm() {
                   min={0.1}
                   decimalScale={1}
                   suffix=" pips"
+                  inputMode="decimal"
                   key={form.key('pipDistance')}
                   {...form.getInputProps('pipDistance')}
                 />
@@ -301,6 +304,7 @@ export function CalculatorForm() {
                       decimalScale={selectedSymbol.id === 'XAUUSD' ? 2 : 5}
                       thousandSeparator=","
                       prefix={selectedSymbol.id === 'XAUUSD' ? '$' : ''}
+                      inputMode="decimal"
                       key={form.key('entryPrice')}
                       {...form.getInputProps('entryPrice')}
                     />
@@ -315,6 +319,7 @@ export function CalculatorForm() {
                       decimalScale={selectedSymbol.id === 'XAUUSD' ? 2 : 5}
                       thousandSeparator=","
                       prefix={selectedSymbol.id === 'XAUUSD' ? '$' : ''}
+                      inputMode="decimal"
                       key={form.key('stopLoss')}
                       {...form.getInputProps('stopLoss')}
                     />
