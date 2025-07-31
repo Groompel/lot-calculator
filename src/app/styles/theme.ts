@@ -1,4 +1,4 @@
-import { createTheme, DEFAULT_THEME } from '@mantine/core';
+import { createTheme, DEFAULT_THEME, InputBase } from '@mantine/core';
 
 export const theme = createTheme({
   fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif',
@@ -63,6 +63,12 @@ export const theme = createTheme({
         size: 'lg',
       },
     },
+
+    InputBase: InputBase.extend({
+      defaultProps: {
+        size: 'md',
+      },
+    }),
 
     Card: {
       defaultProps: {
