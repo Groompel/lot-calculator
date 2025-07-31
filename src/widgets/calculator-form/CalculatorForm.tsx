@@ -242,7 +242,8 @@ export function CalculatorForm() {
                 min={0}
                 decimalScale={2}
                 prefix="$"
-                thousandSeparator=","
+                thousandSeparator=" "
+                decimalSeparator=","
                 inputMode="decimal"
                 key={form.key('accountBalance')}
                 {...form.getInputProps('accountBalance')}
@@ -255,6 +256,8 @@ export function CalculatorForm() {
                 max={100}
                 decimalScale={1}
                 suffix="%"
+                thousandSeparator=" "
+                decimalSeparator=","
                 inputMode="decimal"
                 key={form.key('riskPercentage')}
                 {...form.getInputProps('riskPercentage')}
@@ -288,6 +291,8 @@ export function CalculatorForm() {
                   min={0.1}
                   decimalScale={1}
                   suffix=" pips"
+                  thousandSeparator=" "
+                  decimalSeparator=","
                   inputMode="decimal"
                   key={form.key('pipDistance')}
                   {...form.getInputProps('pipDistance')}
@@ -298,11 +303,12 @@ export function CalculatorForm() {
                     <NumberInput
                       label={t('calculator.form.entryPrice')}
                       placeholder={
-                        selectedSymbol.id === 'XAUUSD' ? '$2,650.00' : '1.05450'
+                        selectedSymbol.id === 'XAUUSD' ? '$2 650,00' : '1,05450'
                       }
                       min={0}
                       decimalScale={selectedSymbol.id === 'XAUUSD' ? 2 : 5}
-                      thousandSeparator=","
+                      thousandSeparator=" "
+                      decimalSeparator=","
                       prefix={selectedSymbol.id === 'XAUUSD' ? '$' : ''}
                       inputMode="decimal"
                       key={form.key('entryPrice')}
@@ -313,11 +319,12 @@ export function CalculatorForm() {
                     <NumberInput
                       label={t('calculator.form.stopLossPrice')}
                       placeholder={
-                        selectedSymbol.id === 'XAUUSD' ? '$2,630.00' : '1.05400'
+                        selectedSymbol.id === 'XAUUSD' ? '$2 630,00' : '1,05400'
                       }
                       min={0}
                       decimalScale={selectedSymbol.id === 'XAUUSD' ? 2 : 5}
-                      thousandSeparator=","
+                      thousandSeparator=" "
+                      decimalSeparator=","
                       prefix={selectedSymbol.id === 'XAUUSD' ? '$' : ''}
                       inputMode="decimal"
                       key={form.key('stopLoss')}
