@@ -1,6 +1,6 @@
+import { Button, Group, Menu, Text } from '@mantine/core';
+import { IconChevronDown } from '@tabler/icons-react';
 import { useState } from 'react';
-import { Menu, ActionIcon, Group, Text, Button } from '@mantine/core';
-import { IconLanguage, IconChevronDown } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
 interface Language {
