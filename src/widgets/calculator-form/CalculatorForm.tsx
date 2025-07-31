@@ -13,17 +13,18 @@ import {
   Divider,
   Badge,
   SegmentedControl,
+  useMantineTheme,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useDebouncedValue } from '@mantine/hooks';
+import { useDebouncedValue, useMediaQuery } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconCalculator, IconInfoCircle, IconX } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 
 import {
   calculateLotSize,
   formatCurrency,
   formatNumber,
-  calculatePipDistance,
 } from '../../shared/lib/lot-calculator';
 import {
   getAvailableSymbols,
@@ -46,12 +47,15 @@ interface FormValues {
 }
 
 export function CalculatorForm() {
+  const { t } = useTranslation();
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [selectedSymbol, setSelectedSymbol] =
     useState<TradingSymbol>(DEFAULT_SYMBOL);
   const [inputMode, setInputMode] = useState<InputMode>('pips'); // Default to pips mode
   const [hasCalculatedOnce, setHasCalculatedOnce] = useState(false);
   const resultsSectionRef = useRef<HTMLDivElement>(null);
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
 
   const form = useForm<FormValues>({
     mode: 'uncontrolled',
@@ -65,27 +69,28 @@ export function CalculatorForm() {
     },
     validate: {
       accountBalance: (value) =>
-        value <= 0 ? 'Account balance must be positive' : null,
+        value <= 0 ? t('calculator.validation.accountBalancePositive') : null,
       riskPercentage: (value) => {
-        if (value <= 0) return 'Risk percentage must be positive';
-        if (value > 100) return 'Risk percentage cannot exceed 100%';
+        if (value <= 0)
+          return t('calculator.validation.riskPercentagePositive');
+        if (value > 100) return t('calculator.validation.riskPercentageMax');
         return null;
       },
       entryPrice: (value) => {
         if (inputMode === 'price' && value <= 0) {
-          return 'Entry price must be positive';
+          return t('calculator.validation.entryPricePositive');
         }
         return null;
       },
       stopLoss: (value) => {
         if (inputMode === 'price' && value <= 0) {
-          return 'Stop loss must be positive';
+          return t('calculator.validation.stopLossPositive');
         }
         return null;
       },
       pipDistance: (value) => {
         if (inputMode === 'pips' && value <= 0) {
-          return 'Pip distance must be positive';
+          return t('calculator.validation.pipDistancePositive');
         }
         return null;
       },
@@ -98,107 +103,98 @@ export function CalculatorForm() {
 
   const availableSymbols = getAvailableSymbols();
 
+  // Transform symbols for Select component
   const symbolOptions = availableSymbols.map((symbol) => ({
     value: symbol.id,
     label: `${symbol.symbol} - ${symbol.name}`,
   }));
 
   // Silent validation function for auto-calculation
-  const validateFormSilently = (values: FormValues): boolean => {
-    const symbol = getSymbolById(values.symbolId);
-    if (!symbol) return false;
-
-    // Check all required fields are positive
-    if (values.accountBalance <= 0) return false;
-    if (values.riskPercentage <= 0 || values.riskPercentage > 100) return false;
-
-    // Check mode-specific validations
-    if (inputMode === 'pips') {
-      if (values.pipDistance <= 0) return false;
-    } else {
-      if (values.entryPrice <= 0) return false;
-      if (values.stopLoss <= 0) return false;
-      if (values.entryPrice === values.stopLoss) return false;
-    }
-
-    return true;
+  const validateFormSilently = (): boolean => {
+    const errors = form.validate();
+    return Object.keys(errors.errors || {}).length === 0;
   };
 
   const performCalculation = (
     values: FormValues,
-    isAutomatic: boolean = false
+    isAutoCalculation = false
   ) => {
-    const symbol = getSymbolById(values.symbolId);
-    if (!symbol) {
-      if (!isAutomatic) {
+    try {
+      const symbol = getSymbolById(values.symbolId);
+      if (!symbol) {
+        throw new Error('Invalid trading symbol');
+      }
+
+      let entryPrice = values.entryPrice;
+      let stopLoss = values.stopLoss;
+
+      // If using pips mode, calculate prices from pip distance
+      if (inputMode === 'pips') {
+        // Use default prices for calculation
+        entryPrice = symbol.id === 'XAUUSD' ? 2650 : 1.0545;
+        const priceDistance =
+          symbol.id === 'XAUUSD'
+            ? values.pipDistance
+            : values.pipDistance / 10000;
+        stopLoss = entryPrice - priceDistance;
+      }
+
+      const calculationResult = calculateLotSize({
+        accountBalance: values.accountBalance,
+        riskPercentage: values.riskPercentage,
+        entryPrice,
+        stopLoss,
+        symbol,
+      });
+
+      setResult(calculationResult);
+
+      if (!isAutoCalculation && !calculationResult.isValid) {
         notifications.show({
-          title: 'Error',
-          message: 'Invalid trading symbol selected',
-          color: 'red',
-          icon: <IconX size={16} />,
+          title: 'Calculation Warning',
+          message: calculationResult.errors.join(', '),
+          color: 'yellow',
         });
       }
-      return;
-    }
 
-    let pipDistance = values.pipDistance;
+      // Scroll to results section only on manual calculation on mobile
+      if (!isAutoCalculation && resultsSectionRef.current && isMobile) {
+        resultsSectionRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center',
+        });
+      }
+    } catch (error) {
+      setResult({
+        lotSize: 0,
+        riskAmount: 0,
+        positionSize: 0,
+        pipDistance: 0,
+        pipValue: 0,
+        isValid: false,
+        errors: [error instanceof Error ? error.message : 'Calculation failed'],
+      });
 
-    // If using price mode, calculate pip distance from entry and stop loss
-    if (inputMode === 'price') {
-      pipDistance = calculatePipDistance(
-        values.entryPrice,
-        values.stopLoss,
-        symbol
-      );
-    }
-
-    // For calculation, we need a dummy entry price and stop loss based on pip distance
-    // We'll use a standard entry price for the symbol and calculate stop loss from it
-    const dummyEntryPrice = selectedSymbol.id === 'XAUUSD' ? 2650 : 1.0545;
-    let priceDistance: number;
-
-    if (symbol.id === 'XAUUSD') {
-      priceDistance = pipDistance;
-    } else {
-      priceDistance = pipDistance / 10000;
-    }
-
-    const dummyStopLoss = dummyEntryPrice - priceDistance;
-
-    const calculationResult = calculateLotSize({
-      accountBalance: values.accountBalance,
-      riskPercentage: values.riskPercentage,
-      entryPrice: dummyEntryPrice,
-      stopLoss: dummyStopLoss,
-      symbol,
-    });
-
-    setResult(calculationResult);
-
-    // Only show notifications for manual calculations
-    if (!isAutomatic) {
-      if (calculationResult.isValid) {
-        resultsSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-      } else {
+      if (!isAutoCalculation) {
         notifications.show({
           title: 'Calculation Error',
           message:
-            calculationResult.errors[0] || 'Invalid calculation parameters',
+            error instanceof Error ? error.message : 'Calculation failed',
           color: 'red',
-          icon: <IconX size={16} />,
         });
       }
     }
   };
 
   const handleSubmit = (values: FormValues) => {
-    performCalculation(values, false);
     setHasCalculatedOnce(true);
+    performCalculation(values, false);
   };
 
-  // Auto-calculation effect when values change (after first manual calculation)
+  // Auto-calculate when form values change (after first manual calculation)
   useEffect(() => {
-    if (hasCalculatedOnce && validateFormSilently(debouncedValues)) {
+    if (hasCalculatedOnce && validateFormSilently()) {
       performCalculation(debouncedValues, true);
     }
   }, [debouncedValues, inputMode, hasCalculatedOnce]);
@@ -219,15 +215,15 @@ export function CalculatorForm() {
           <Title order={2} mb="md">
             <Group>
               <IconCalculator size={24} />
-              Lot Size Calculator
+              {t('calculator.title')}
             </Group>
           </Title>
 
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <Stack gap="md">
               <Select
-                label="Trading Symbol"
-                placeholder="Select a trading symbol"
+                label={t('calculator.form.tradingSymbol')}
+                placeholder={t('calculator.form.tradingSymbolPlaceholder')}
                 data={symbolOptions}
                 key={form.key('symbolId')}
                 {...form.getInputProps('symbolId')}
@@ -241,8 +237,8 @@ export function CalculatorForm() {
               />
 
               <NumberInput
-                label="Account Balance"
-                placeholder="Enter your account balance"
+                label={t('calculator.form.accountBalance')}
+                placeholder={t('calculator.form.accountBalancePlaceholder')}
                 min={0}
                 decimalScale={2}
                 prefix="$"
@@ -252,8 +248,8 @@ export function CalculatorForm() {
               />
 
               <NumberInput
-                label="Risk Percentage"
-                placeholder="Risk per trade"
+                label={t('calculator.form.riskPercentage')}
+                placeholder={t('calculator.form.riskPercentagePlaceholder')}
                 min={0.1}
                 max={100}
                 decimalScale={1}
@@ -264,14 +260,20 @@ export function CalculatorForm() {
 
               <div>
                 <Text size="sm" fw={500} mb="xs">
-                  How to set pip distance?
+                  {t('calculator.form.pipDistanceMode')}
                 </Text>
                 <SegmentedControl
                   value={inputMode}
                   onChange={(value) => setInputMode(value as InputMode)}
                   data={[
-                    { label: 'Direct Pips', value: 'pips' },
-                    { label: 'From Prices', value: 'price' },
+                    {
+                      label: t('calculator.form.pipDistanceModes.pips'),
+                      value: 'pips',
+                    },
+                    {
+                      label: t('calculator.form.pipDistanceModes.price'),
+                      value: 'price',
+                    },
                   ]}
                   fullWidth
                 />
@@ -279,8 +281,8 @@ export function CalculatorForm() {
 
               {inputMode === 'pips' ? (
                 <NumberInput
-                  label="Pip Distance"
-                  placeholder="20"
+                  label={t('calculator.form.pipDistance')}
+                  placeholder={t('calculator.form.pipDistancePlaceholder')}
                   min={0.1}
                   decimalScale={1}
                   suffix=" pips"
@@ -291,7 +293,7 @@ export function CalculatorForm() {
                 <Grid>
                   <Grid.Col span={6}>
                     <NumberInput
-                      label="Entry Price"
+                      label={t('calculator.form.entryPrice')}
                       placeholder={
                         selectedSymbol.id === 'XAUUSD' ? '$2,650.00' : '1.05450'
                       }
@@ -305,7 +307,7 @@ export function CalculatorForm() {
                   </Grid.Col>
                   <Grid.Col span={6}>
                     <NumberInput
-                      label="Stop Loss Price"
+                      label={t('calculator.form.stopLossPrice')}
                       placeholder={
                         selectedSymbol.id === 'XAUUSD' ? '$2,630.00' : '1.05400'
                       }
@@ -325,7 +327,7 @@ export function CalculatorForm() {
                 fullWidth
                 leftSection={<IconCalculator size={16} />}
               >
-                Calculate Lot Size
+                {t('calculator.form.calculateButton')}
               </Button>
             </Stack>
           </form>
@@ -333,21 +335,22 @@ export function CalculatorForm() {
           {selectedSymbol && (
             <Alert
               icon={<IconInfoCircle size={16} />}
-              title="Symbol Information"
+              title={t('calculator.symbolInfo.title')}
               color="blue"
               mt="md"
             >
               <Stack gap="xs">
                 <Text size="sm">
-                  <strong>Contract Size:</strong>{' '}
+                  <strong>{t('calculator.symbolInfo.contractSize')}:</strong>{' '}
                   {formatNumber(selectedSymbol.contractSize, 0)}
                 </Text>
                 <Text size="sm">
-                  <strong>Pip Value:</strong> ${selectedSymbol.pipValue} per lot
+                  <strong>{t('calculator.symbolInfo.pipValue')}:</strong> $
+                  {selectedSymbol.pipValue} per lot
                 </Text>
                 <Text size="sm">
-                  <strong>Lot Range:</strong> {selectedSymbol.minLotSize} -{' '}
-                  {selectedSymbol.maxLotSize}
+                  <strong>{t('calculator.symbolInfo.lotRange')}:</strong>{' '}
+                  {selectedSymbol.minLotSize} - {selectedSymbol.maxLotSize}
                 </Text>
               </Stack>
             </Alert>
@@ -358,7 +361,7 @@ export function CalculatorForm() {
       <Grid.Col span={{ base: 12, md: 6 }}>
         <Card ref={resultsSectionRef}>
           <Title order={2} mb="md">
-            Calculation Results
+            {t('calculator.resultsTitle')}
           </Title>
 
           {result ? (
@@ -366,7 +369,7 @@ export function CalculatorForm() {
               {!result.isValid && result.errors.length > 0 && (
                 <Alert
                   icon={<IconX size={16} />}
-                  title="Calculation Errors"
+                  title={t('calculator.results.calculationErrors')}
                   color="red"
                 >
                   {result.errors.map((error, index) => (
@@ -378,7 +381,9 @@ export function CalculatorForm() {
               )}
 
               <Group justify="space-between">
-                <Text fw={500}>Recommended Lot Size:</Text>
+                <Text fw={500}>
+                  {t('calculator.results.recommendedLotSize')}:
+                </Text>
                 <Badge
                   size="xl"
                   variant="filled"
@@ -393,19 +398,19 @@ export function CalculatorForm() {
               <Grid>
                 <Grid.Col span={6}>
                   <Text size="sm" c="dimmed">
-                    Risk Amount
+                    {t('calculator.results.riskAmount')}
                   </Text>
                   <Text fw={500}>{formatCurrency(result.riskAmount)}</Text>
                 </Grid.Col>
                 <Grid.Col span={6}>
                   <Text size="sm" c="dimmed">
-                    Position Size
+                    {t('calculator.results.positionSize')}
                   </Text>
                   <Text fw={500}>{formatCurrency(result.positionSize)}</Text>
                 </Grid.Col>
                 <Grid.Col span={6}>
                   <Text size="sm" c="dimmed">
-                    Pip Distance
+                    {t('calculator.results.pipDistance')}
                   </Text>
                   <Text fw={500}>
                     {formatNumber(result.pipDistance, 1)} pips
@@ -413,7 +418,7 @@ export function CalculatorForm() {
                 </Grid.Col>
                 <Grid.Col span={6}>
                   <Text size="sm" c="dimmed">
-                    Pip Value
+                    {t('calculator.results.pipValue')}
                   </Text>
                   <Text fw={500}>{formatCurrency(result.pipValue)}</Text>
                 </Grid.Col>
@@ -421,8 +426,7 @@ export function CalculatorForm() {
             </Stack>
           ) : (
             <Text c="dimmed" ta="center" py="xl">
-              Enter your trading parameters and click "Calculate Lot Size" to
-              see results
+              {t('calculator.results.emptyState')}
             </Text>
           )}
         </Card>

@@ -15,7 +15,7 @@ function App() {
           <CalculatorPage />
         </AppShell.Main>
 
-        <AppShell.Footer>
+        <AppShell.Footer pos="static">
           <Footer />
         </AppShell.Footer>
       </AppShell>

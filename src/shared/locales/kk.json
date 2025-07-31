@@ -1,0 +1,75 @@
+{
+  "app": {
+    "title": "Лот мөлшерін есептеу калькуляторы",
+    "description": "Есеп балансыңыз, тәуекел төзімділігіңіз және сауда параметрлеріңіз негізінде сауда мәмілелеріңіз үшін оңтайлы лот мөлшерін есептеңіз. Кәсіби тәуекелдерді басқару үшін жасалған.",
+    "company": "Empire FX by rr.gali"
+  },
+  "header": {
+    "companyName": "Empire FX Калькулятор",
+    "socialLinks": {
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "facebook": "Facebook",
+      "instagram": "Instagram"
+    }
+  },
+  "footer": {
+    "copyright": "© 2025 Empire FX by rr.gali",
+    "builtWith": "Жасалған",
+    "using": "пайдаланып",
+    "disclaimer": "⚠️ Сауда айтарлықтай тәуекелмен байланысты. Бұл калькулятор тек білім беру мақсаттары үшін арналған."
+  },
+  "calculator": {
+    "title": "Лот мөлшерін есептеу калькуляторы",
+    "resultsTitle": "Есептеу нәтижелері",
+    "howToUse": "Калькуляторды қалай пайдалану керек",
+    "instructions": "1. Сауда символыңызды таңдаңыз - XAU/USD (алтын), EUR/USD немесе GBP/USD арасынан таңдаңыз\n2. Есеп балансыңызды енгізіңіз - Сіздің жалпы сауда есебіңіздің мөлшері\n3. Тәуекел пайызын орнатыңыз - Бір мәміле үшін есебіңіздің қанша бөлігін тәуекелге салуға дайынсыз (әдетте 1-2%)\n4. Кіру және стоп-лосс бағаларын енгізіңіз - Жоспарланған кіру нүктесі және стоп-лосс деңгейі\n5. Есептеу - Ұсынылған лот мөлшері және позиция мәліметтерін алыңыз",
+    "form": {
+      "tradingSymbol": "Сауда символы",
+      "tradingSymbolPlaceholder": "Сауда символын таңдаңыз",
+      "accountBalance": "Есеп балансы",
+      "accountBalancePlaceholder": "Есеп балансыңызды енгізіңіз",
+      "riskPercentage": "Тәуекел пайызы",
+      "riskPercentagePlaceholder": "Мәміле үшін тәуекел",
+      "pipDistanceMode": "Пип қашықтығын қалай орнату керек?",
+      "pipDistanceModes": {
+        "pips": "Тікелей пиптер",
+        "price": "Бағалар бойынша"
+      },
+      "pipDistance": "Пип қашықтығы",
+      "pipDistancePlaceholder": "20",
+      "entryPrice": "Кіру бағасы",
+      "stopLossPrice": "Стоп-лосс бағасы",
+      "calculateButton": "Лот мөлшерін есептеу"
+    },
+    "validation": {
+      "accountBalancePositive": "Есеп балансы оң болуы керек",
+      "riskPercentagePositive": "Тәуекел пайызы оң болуы керек",
+      "riskPercentageMax": "Тәуекел пайызы 100%-дан аспауы керек",
+      "entryPricePositive": "Кіру бағасы оң болуы керек",
+      "stopLossPositive": "Стоп-лосс оң болуы керек",
+      "pipDistancePositive": "Пип қашықтығы оң болуы керек"
+    },
+    "symbolInfo": {
+      "title": "Символ туралы ақпарат",
+      "contractSize": "Келісімшарт мөлшері",
+      "pipValue": "Пип құны",
+      "lotRange": "Лот диапазоны"
+    },
+    "results": {
+      "emptyState": "Сауда параметрлеріңізді енгізіп, нәтижелерді көру үшін \"Лот мөлшерін есептеу\" түймесін басыңыз",
+      "recommendedLotSize": "Ұсынылған лот мөлшері",
+      "riskAmount": "Тәуекел сомасы",
+      "positionSize": "Позиция мөлшері",
+      "pipDistance": "Пип қашықтығы",
+      "pipValue": "Пип құны",
+      "calculationErrors": "Есептеу қателері"
+    }
+  },
+  "language": {
+    "select": "Тіл",
+    "english": "English",
+    "russian": "Русский",
+    "kazakh": "Қазақша"
+  }
+}

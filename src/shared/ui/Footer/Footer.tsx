@@ -1,7 +1,9 @@
-import { Box, Container, Text, Group, Anchor } from '@mantine/core';
-import { IconHeart } from '@tabler/icons-react';
+import { Box, Container, Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 
 export function Footer() {
+  const { t } = useTranslation();
+
   return (
     <Box
       component="footer"
@@ -12,33 +14,12 @@ export function Footer() {
       })}
     >
       <Container size="lg">
-        <Group justify="space-between" align="center">
-          <Text size="sm" c="dimmed">
-            © 2025 Empire Gold Trading Solutions. All rights reserved.
-          </Text>
-
-          <Group align="center" gap="xs">
-            <Text size="sm" c="dimmed">
-              Built with
-            </Text>
-            <IconHeart size={14} color="red" />
-            <Text size="sm" c="dimmed">
-              using
-            </Text>
-            <Anchor
-              href="https://mantine.dev"
-              target="_blank"
-              size="sm"
-              c="blue"
-            >
-              Mantine
-            </Anchor>
-          </Group>
-        </Group>
+        <Text size="sm" c="dimmed" ta="center">
+          {t('footer.copyright')}
+        </Text>
 
         <Text size="xs" c="dimmed" ta="center" mt="sm">
-          ⚠️ Trading involves substantial risk. This calculator is for
-          educational purposes only.
+          {t('footer.disclaimer')}
         </Text>
       </Container>
     </Box>

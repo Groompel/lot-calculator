@@ -11,6 +11,7 @@ A modern, professional trading lot size calculator built with React, TypeScript,
 
 - 🎯 **Precise Lot Size Calculation** - Calculate optimal lot sizes based on account balance and risk percentage
 - 📊 **Multiple Trading Symbols** - Support for XAU/USD, EUR/USD, GBP/USD (easily configurable for more)
+- 🌍 **Multi-Language Support** - Full internationalization with English, Russian, and Kazakh languages
 - 🎨 **Modern UI/UX** - Clean, minimal design with Mantine components
 - 🌓 **Dark/Light Theme** - Automatic theme switching with manual override
 - 📱 **Responsive Design** - Works perfectly on desktop, tablet, and mobile
@@ -42,9 +43,36 @@ A modern, professional trading lot size calculator built with React, TypeScript,
 - **TypeScript** - Type-safe development
 - **Vite** - Fast build tool and dev server
 - **Mantine 8.x** - Modern React components library
+- **react-i18next** - Internationalization framework
 - **PostCSS** - CSS processing with Mantine preset
 - **Tabler Icons** - Beautiful SVG icons
 - **Feature-Sliced Design** - Scalable architecture pattern
+
+## Internationalization
+
+The application supports multiple languages with full translation of all user-facing content:
+
+### Supported Languages
+
+- 🇺🇸 **English** - Default language
+- 🇷🇺 **Russian** - Русский язык
+- 🇰🇿 **Kazakh** - Қазақ тілі
+
+### Features
+
+- **Automatic Language Detection** - Detects browser language preference
+- **Persistent Language Selection** - Remembers user's language choice
+- **Complete Translation Coverage** - All text, labels, validation messages, and instructions
+- **Easy Language Switching** - Convenient language selector in the header
+- **Professional Financial Translations** - Accurate terminology for trading and risk management
+
+### Adding New Languages
+
+To add support for additional languages:
+
+1. Create a new translation file in `src/shared/locales/[language-code].json`
+2. Add the language to the `languages` array in `src/features/language-switcher/LanguageSwitcher.tsx`
+3. Import and add the language to the resources in `src/shared/config/i18n.ts`
 
 ## Project Structure
 
@@ -209,4 +237,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Built with ❤️ by Empire Gold Trading Solutions
+Built with ❤️ by Empire FX by rr.gali

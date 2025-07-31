@@ -1,0 +1,75 @@
+{
+  "app": {
+    "title": "Trading Lot Size Calculator",
+    "description": "Calculate the optimal lot size for your trades based on your account balance, risk tolerance, and trading parameters. Designed for professional risk management.",
+    "company": "Empire FX by rr.gali"
+  },
+  "header": {
+    "companyName": "Empire FX Calculator",
+    "socialLinks": {
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "facebook": "Facebook",
+      "instagram": "Instagram"
+    }
+  },
+  "footer": {
+    "copyright": "© 2025 Empire FX by rr.gali",
+    "builtWith": "Built with",
+    "using": "using",
+    "disclaimer": "⚠️ Trading involves substantial risk. This calculator is for educational purposes only."
+  },
+  "calculator": {
+    "title": "Lot Size Calculator",
+    "resultsTitle": "Calculation Results",
+    "howToUse": "How to Use the Calculator",
+    "instructions": "1. Select your trading symbol - Choose from XAU/USD (Gold), EUR/USD, or GBP/USD\n2. Enter your account balance - Your total trading account size\n3. Set your risk percentage - How much of your account you're willing to risk per trade (typically 1-2%)\n4. Input entry and stop loss prices - Your planned entry point and stop loss level\n5. Calculate - Get your recommended lot size and position details",
+    "form": {
+      "tradingSymbol": "Trading Symbol",
+      "tradingSymbolPlaceholder": "Select a trading symbol",
+      "accountBalance": "Account Balance",
+      "accountBalancePlaceholder": "Enter your account balance",
+      "riskPercentage": "Risk Percentage",
+      "riskPercentagePlaceholder": "Risk per trade",
+      "pipDistanceMode": "How to set pip distance?",
+      "pipDistanceModes": {
+        "pips": "Direct Pips",
+        "price": "From Prices"
+      },
+      "pipDistance": "Pip Distance",
+      "pipDistancePlaceholder": "20",
+      "entryPrice": "Entry Price",
+      "stopLossPrice": "Stop Loss Price",
+      "calculateButton": "Calculate Lot Size"
+    },
+    "validation": {
+      "accountBalancePositive": "Account balance must be positive",
+      "riskPercentagePositive": "Risk percentage must be positive",
+      "riskPercentageMax": "Risk percentage cannot exceed 100%",
+      "entryPricePositive": "Entry price must be positive",
+      "stopLossPositive": "Stop loss must be positive",
+      "pipDistancePositive": "Pip distance must be positive"
+    },
+    "symbolInfo": {
+      "title": "Symbol Information",
+      "contractSize": "Contract Size",
+      "pipValue": "Pip Value",
+      "lotRange": "Lot Range"
+    },
+    "results": {
+      "emptyState": "Enter your trading parameters and click \"Calculate Lot Size\" to see results",
+      "recommendedLotSize": "Recommended Lot Size",
+      "riskAmount": "Risk Amount",
+      "positionSize": "Position Size",
+      "pipDistance": "Pip Distance",
+      "pipValue": "Pip Value",
+      "calculationErrors": "Calculation Errors"
+    }
+  },
+  "language": {
+    "select": "Language",
+    "english": "English",
+    "russian": "Русский",
+    "kazakh": "Қазақша"
+  }
+}

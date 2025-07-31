@@ -33,6 +33,7 @@ export const theme = createTheme({
   },
 
   spacing: {
+    xxs: '0.25rem',
     xs: '0.5rem',
     sm: '0.75rem',
     md: '1rem',

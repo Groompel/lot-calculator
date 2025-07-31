@@ -1,0 +1,75 @@
+{
+  "app": {
+    "title": "Калькулятор размера лота",
+    "description": "Рассчитайте оптимальный размер лота для ваших сделок на основе баланса счета, риск-менеджмента и торговых параметров. Разработан для профессионального управления рисками.",
+    "company": "Empire FX by rr.gali"
+  },
+  "header": {
+    "companyName": "Empire FX Калькулятор",
+    "socialLinks": {
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn",
+      "facebook": "Facebook",
+      "instagram": "Instagram"
+    }
+  },
+  "footer": {
+    "copyright": "© 2025 Empire FX by rr.gali",
+    "builtWith": "Создано с",
+    "using": "используя",
+    "disclaimer": "⚠️ Торговля связана с существенными рисками. Этот калькулятор предназначен только для образовательных целей."
+  },
+  "calculator": {
+    "title": "Калькулятор размера лота",
+    "resultsTitle": "Результаты расчета",
+    "howToUse": "Как использовать калькулятор",
+    "instructions": "1. Выберите торговый символ - Выберите из XAU/USD (золото), EUR/USD или GBP/USD\n2. Введите баланс счета - Общий размер вашего торгового счета\n3. Установите процент риска - Какую часть счета вы готовы рисковать на сделку (обычно 1-2%)\n4. Введите цены входа и стоп-лосса - Планируемая точка входа и уровень стоп-лосса\n5. Рассчитать - Получите рекомендуемый размер лота и детали позиции",
+    "form": {
+      "tradingSymbol": "Торговый символ",
+      "tradingSymbolPlaceholder": "Выберите торговый символ",
+      "accountBalance": "Баланс счета",
+      "accountBalancePlaceholder": "Введите баланс вашего счета",
+      "riskPercentage": "Процент риска",
+      "riskPercentagePlaceholder": "Риск на сделку",
+      "pipDistanceMode": "Как установить расстояние в пипсах?",
+      "pipDistanceModes": {
+        "pips": "Прямые пипсы",
+        "price": "По ценам"
+      },
+      "pipDistance": "Расстояние в пипсах",
+      "pipDistancePlaceholder": "20",
+      "entryPrice": "Цена входа",
+      "stopLossPrice": "Цена стоп-лосса",
+      "calculateButton": "Рассчитать размер лота"
+    },
+    "validation": {
+      "accountBalancePositive": "Баланс счета должен быть положительным",
+      "riskPercentagePositive": "Процент риска должен быть положительным",
+      "riskPercentageMax": "Процент риска не может превышать 100%",
+      "entryPricePositive": "Цена входа должна быть положительной",
+      "stopLossPositive": "Стоп-лосс должен быть положительным",
+      "pipDistancePositive": "Расстояние в пипсах должно быть положительным"
+    },
+    "symbolInfo": {
+      "title": "Информация о символе",
+      "contractSize": "Размер контракта",
+      "pipValue": "Стоимость пипса",
+      "lotRange": "Диапазон лотов"
+    },
+    "results": {
+      "emptyState": "Введите ваши торговые параметры и нажмите \"Рассчитать размер лота\" для просмотра результатов",
+      "recommendedLotSize": "Рекомендуемый размер лота",
+      "riskAmount": "Сумма риска",
+      "positionSize": "Размер позиции",
+      "pipDistance": "Расстояние в пипсах",
+      "pipValue": "Стоимость пипса",
+      "calculationErrors": "Ошибки расчета"
+    }
+  },
+  "language": {
+    "select": "Язык",
+    "english": "English",
+    "russian": "Русский",
+    "kazakh": "Қазақша"
+  }
+}

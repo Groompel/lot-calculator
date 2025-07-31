@@ -1,7 +1,7 @@
 export const appConfig = {
   name: 'Trading Calculator',
   version: '1.0.0',
-  company: 'Empire Gold Trading Solutions',
+  company: 'Empire FX by rr.gali',
 
   // Default settings
   defaults: {
