@@ -17,12 +17,7 @@ import {
 import { useForm } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import {
-  IconCalculator,
-  IconInfoCircle,
-  IconCheck,
-  IconX,
-} from '@tabler/icons-react';
+import { IconCalculator, IconInfoCircle, IconX } from '@tabler/icons-react';
 
 import {
   calculateLotSize,
