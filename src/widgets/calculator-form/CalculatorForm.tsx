@@ -31,6 +31,11 @@ import {
   formatCurrency,
   formatNumber,
 } from '../../shared/lib/lot-calculator';
+import {
+  TRACK_EVENTS,
+  trackError,
+  trackEvent,
+} from '../../shared/lib/trackEvent';
 import type {
   CalculationResult,
   InputMode,
@@ -149,6 +154,22 @@ export function CalculatorForm() {
 
       setResult(calculationResult);
 
+      // Track calculation event
+      trackEvent(
+        isAutoCalculation
+          ? TRACK_EVENTS.CALCULATION_AUTO_TRIGGERED
+          : TRACK_EVENTS.CALCULATION_PERFORMED,
+        {
+          symbol: symbol.symbol,
+          inputMode,
+          accountBalance: values.accountBalance,
+          riskPercentage: values.riskPercentage,
+          lotSize: calculationResult.lotSize,
+          isValidCalculation: calculationResult.isValid,
+          calculationErrors: calculationResult.errors.join(', '),
+        }
+      );
+
       if (!isAutoCalculation && !calculationResult.isValid) {
         notifications.show({
           title: 'Calculation Warning',
@@ -166,6 +187,9 @@ export function CalculatorForm() {
         });
       }
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Calculation failed';
+
       setResult({
         lotSize: 0,
         riskAmount: 0,
@@ -173,14 +197,21 @@ export function CalculatorForm() {
         pipDistance: 0,
         pipValue: 0,
         isValid: false,
-        errors: [error instanceof Error ? error.message : 'Calculation failed'],
+        errors: [errorMessage],
+      });
+
+      // Track error
+      trackError(errorMessage, 'calculation_error', {
+        symbol: values.symbolId,
+        inputMode,
+        accountBalance: values.accountBalance,
+        riskPercentage: values.riskPercentage,
       });
 
       if (!isAutoCalculation) {
         notifications.show({
           title: 'Calculation Error',
-          message:
-            error instanceof Error ? error.message : 'Calculation failed',
+          message: errorMessage,
           color: 'red',
         });
       }
@@ -189,6 +220,15 @@ export function CalculatorForm() {
 
   const handleSubmit = (values: FormValues) => {
     setHasCalculatedOnce(true);
+
+    // Track form submission
+    trackEvent(TRACK_EVENTS.FORM_SUBMITTED, {
+      symbol: values.symbolId,
+      inputMode,
+      accountBalance: values.accountBalance,
+      riskPercentage: values.riskPercentage,
+    });
+
     performCalculation(values, false);
   };
 
@@ -207,6 +247,19 @@ export function CalculatorForm() {
       setSelectedSymbol(symbol);
     }
   }, [form]);
+
+  // Track when results are viewed
+  useEffect(() => {
+    if (result && result.isValid) {
+      trackEvent(TRACK_EVENTS.RESULTS_VIEWED, {
+        symbol: selectedSymbol.symbol,
+        inputMode,
+        lotSize: result.lotSize,
+        riskAmount: result.riskAmount,
+        positionSize: result.positionSize,
+      });
+    }
+  }, [result, selectedSymbol.symbol, inputMode]);
 
   return (
     <Grid w="100%">
@@ -232,6 +285,12 @@ export function CalculatorForm() {
                   const newSymbol = getSymbolById(value || DEFAULT_SYMBOL.id);
                   if (newSymbol) {
                     setSelectedSymbol(newSymbol);
+
+                    // Track symbol change
+                    trackEvent(TRACK_EVENTS.SYMBOL_CHANGED, {
+                      symbol: newSymbol.symbol,
+                      inputMode,
+                    });
                   }
                 }}
               />
@@ -269,7 +328,16 @@ export function CalculatorForm() {
                 </Text>
                 <SegmentedControl
                   value={inputMode}
-                  onChange={(value) => setInputMode(value as InputMode)}
+                  onChange={(value) => {
+                    const newInputMode = value as InputMode;
+                    setInputMode(newInputMode);
+
+                    // Track input mode change
+                    trackEvent(TRACK_EVENTS.INPUT_MODE_CHANGED, {
+                      inputMode: newInputMode,
+                      symbol: selectedSymbol.symbol,
+                    });
+                  }}
                   data={[
                     {
                       label: t('calculator.form.pipDistanceModes.pips'),
